@@ -12,6 +12,7 @@ export default class ProductList extends Component {
                 product={item}
                 onSelected={this.props.onSelected}
                 onShowModal={this.props.onShowModal}
+                onAddToCart={this.props.onAddToCart}
               />
             </div>
           ))}

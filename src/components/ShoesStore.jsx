@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import Modal from "./Modal";
 import ProductList from "./ProductList";
+import ShoppingCart from "./ShoppingCart";
 
 export default class ShoesStore extends Component {
   products = [
@@ -148,6 +149,8 @@ export default class ShoesStore extends Component {
   state = {
     showModal: false,
     selected: null,
+    showCart: false,
+    cart: [],
   };
   handleSelected = (p) => {
     this.setState({
@@ -164,16 +167,108 @@ export default class ShoesStore extends Component {
       showModal: false,
     });
   };
+  handleShowCart = () => {
+    this.setState({
+      showCart: true,
+    });
+  };
+  handleHideCart = () => {
+    this.setState({
+      showCart: false,
+    });
+  };
+  handleAddToCart = (p) => {
+    const clone = [...this.state.cart];
+    const exist = clone.find((c) => c.product.id === p.id);
+    if (!exist) {
+      const cartItem = {
+        product: p,
+        quantity: 1,
+      };
+      clone.push(cartItem);
+    } else {
+      exist.quantity++;
+    }
+    this.setState({
+      cart: clone,
+    });
+  };
+  handleDeleteCartItem = (id) => {
+    const clone = [...this.state.cart];
+    const exist = clone.findIndex((c) => c.product.id === id);
+    if (exist !== -1) {
+      clone.splice(exist, 1);
+    }
+    this.setState({
+      cart: clone,
+    });
+  };
+  handleDeleteAll = () => {
+    this.setState({
+      cart: [],
+    });
+  };
+  handleIncreaseQuantity = (id) => {
+    const clone = [...this.state.cart];
+    const exist = clone.find((c) => c.product.id === id);
+    if (exist) {
+      exist.quantity++;
+    }
+    this.setState({
+      cart: clone,
+    });
+  };
+  handleDecreaseQuantity = (id) => {
+    const clone = [...this.state.cart];
+    const exist = clone.find((c) => c.product.id === id);
+    const existed = clone.findIndex((c) => c.product.id === id);
+    if (exist) {
+      exist.quantity--;
+    }
+    if (exist.quantity === 0) {
+      clone.splice(existed, 1);
+    }
+    this.setState({
+      cart: clone,
+    });
+  };
+  totalItem = () =>
+    this.state.cart.reduce((total, item) => total + item.quantity, 0);
   render() {
     return (
       <>
         <h1 className="display-1 text-center m-5">Shoes shop</h1>
+        <div className="p-4 text-center">
+          <button
+            onClick={() => this.handleShowCart()}
+            className="btn btn-success"
+          >
+            Cart ({this.totalItem()})
+          </button>
+        </div>
         <ProductList
           products={this.products}
           onSelected={this.handleSelected}
+          onAddToCart={this.handleAddToCart}
           onShowModal={this.handleShowModal}
         />
-        {this.state.showModal && <Modal selected={this.state.selected} onHideModal={this.handleHideModal} />}
+        {this.state.showModal && (
+          <Modal
+            selected={this.state.selected}
+            onHideModal={this.handleHideModal}
+            onAddToCart={this.handleAddToCart}
+          />
+        )}
+        {this.state.showCart && (
+          <ShoppingCart
+            cart={this.state.cart}
+            onHideCart={this.handleHideCart}
+            onDeleteCartItem={this.handleDeleteCartItem}
+            onDeleteAll={this.handleDeleteAll}
+            onIncreaseQuantity={this.handleIncreaseQuantity}
+            onDecreaseQuantity={this.handleDecreaseQuantity}
+          />
+        )}
       </>
     );
   }

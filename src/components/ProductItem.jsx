@@ -18,6 +18,12 @@ export default class ProductItem extends Component {
           >
             Detail
           </button>
+          <button
+            onClick={() => this.props.onAddToCart(this.props.product)}
+            className="btn btn-warning"
+          >
+            Add to cart
+          </button>
         </div>
       </div>
     );

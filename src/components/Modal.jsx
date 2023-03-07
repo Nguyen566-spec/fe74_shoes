@@ -18,6 +18,12 @@ export default class Modal extends Component {
                 <h1>Name: {name}</h1>
                 <p>Price: ${price}</p>
                 <p>Quantity: {quantity}</p>
+                <button
+                  onClick={() => this.props.onAddToCart(this.props.selected)}
+                  className="btn btn-dark"
+                >
+                  Add to cart
+                </button>
               </div>
               <div className="col-12">
                 <p>Description: {description}</p>
